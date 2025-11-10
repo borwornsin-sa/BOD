@@ -8,8 +8,6 @@ import re
 from datetime import datetime
 from pathlib import Path
 from io import BytesIO
-
-# --- Library Imports ---
 from openai import AzureOpenAI
 from azure.cosmos import CosmosClient
 import tiktoken
@@ -28,7 +26,6 @@ try:
 except ImportError:
     DOCX_SUPPORT = False
     logging.warning("python-docx not installed. DOCX file processing will be disabled.")
-
 # --- End Document Processing Imports ---
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
@@ -44,11 +41,10 @@ GPT_DEPLOYMENT = os.getenv("GPT_DEPLOYMENT", "gpt-4.1")
 
 COSMOS_URI = os.getenv("COSMOS_URI")
 COSMOS_KEY = os.getenv("COSMOS_KEY")
-
+# Default Cosmos DB Name and new Knowledge Base Container Name
 COSMOS_DB_NAME = os.getenv("COSMOS_DB_NAME", "Copilot-BOD")
 COSMOS_KB_CONTAINER_NAME = os.getenv("COSMOS_KB_CONTAINER_NAME", "BOD-Knowledgebase")
-COSMOS_USAGES_CONTAINER_NAME = os.getenv("COSMOS_USAGES_CONTAINER_NAME", "usages")
-
+COSMOS_USAGES_CONTAINER_NAME = os.getenv("COSMOS_USAGES_CONTAINER_NAME", "usages") # Your existing usages container
 # --- Token pricing per 1M tokens (USD) ---
 # (TOKEN_PRICING dictionary remains the same as your original code)
 TOKEN_PRICING = {
@@ -82,7 +78,6 @@ TOKEN_PRICING = {
         "output": 0.0
     }
 }
-
 # --- Initialize clients ---
 embedding_client = AzureOpenAI(
     api_version="2024-12-01-preview",
@@ -303,7 +298,7 @@ def delete_document_by_sharepoint_id(sharepoint_id: str, container):
 # --- Azure Function: generate (The one we modified) ---
 
 @app.route(route="generate")
-def generate(req: func.HttpRequest) -> func.HttpResponse:
+def generateBODPRD(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Generate response function triggered')
     try:
         req_body = req.get_json()
