@@ -4,7 +4,6 @@ import json
 import base64
 import os
 import uuid
-import re
 from datetime import datetime
 from pathlib import Path
 from io import BytesIO
@@ -49,12 +48,12 @@ COSMOS_USAGES_CONTAINER_NAME = os.getenv("COSMOS_USAGES_CONTAINER_NAME", "usages
 # (TOKEN_PRICING dictionary remains the same as your original code)
 TOKEN_PRICING = {
     "gpt-4o": {
-        "input": 5.00,
-        "output": 15.00
+        "input": 2.00,
+        "output": 8.00
     },
     "gpt-4o-mini": {
-        "input": 0.15,
-        "output": 0.60
+        "input": 0.40,
+        "output": 1.60
     },
     "gpt-4.1": {
         "input": 2.00,
@@ -84,11 +83,13 @@ embedding_client = AzureOpenAI(
     azure_endpoint=AZURE_OPENAI_ENDPOINT_EMBEDDING,
     api_key=AZURE_OPENAI_API_KEY_EMBEDDING
 )
+
 gpt_client = AzureOpenAI(
     api_version="2024-12-01-preview",
     azure_endpoint=AZURE_OPENAI_ENDPOINT_GPT,
     api_key=AZURE_OPENAI_API_KEY_GPT
 )
+
 cosmos_client = CosmosClient(COSMOS_URI, credential=COSMOS_KEY)
 
 # --- Helper Functions ---
